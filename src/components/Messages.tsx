@@ -10,11 +10,26 @@ import Image from 'next/image'
 interface MessagesProps {
   initialMessages: Message[]
   sessionId: string
+  chatId: string
+  sessionImg: string | null | undefined
+  chatPartner: User
 }
 
-const Messages: FC<MessagesProps> = ({ initialMessages, sessionId }) => {
+const Messages: FC<MessagesProps> = ({
+  initialMessages,
+  sessionId,
+  chatId,
+  chatPartner,
+  sessionImg,
+}) => {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const scrollDownRef = useRef<HTMLDivElement | null>(null)
+
+  const formatTimestamp = (timestamp: number) => {
+    console.log(timestamp)
+    return format(timestamp, 'HH:mm')
+  }
+
   return (
     <div
       id='messages'
@@ -27,9 +42,6 @@ const Messages: FC<MessagesProps> = ({ initialMessages, sessionId }) => {
         const hasNextMessageFromSameUser =
           messages[index - 1]?.senderId === messages[index].senderId
 
-        const formatTimestamp = (timestamp: number) => {
-          return format(timestamp, 'HH:mm')
-        }
         return (
           <div
             className='chat-message'
@@ -72,7 +84,7 @@ const Messages: FC<MessagesProps> = ({ initialMessages, sessionId }) => {
                   invisible: hasNextMessageFromSameUser,
                 })}
               >
-                {/* <Image
+                <Image
                   fill
                   src={
                     isCurrentUser ? (sessionImg as string) : chatPartner.image
@@ -80,7 +92,7 @@ const Messages: FC<MessagesProps> = ({ initialMessages, sessionId }) => {
                   alt='Profile picture'
                   referrerPolicy='no-referrer'
                   className='rounded-full'
-                /> */}
+                />
               </div>
             </div>
           </div>
