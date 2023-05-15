@@ -8,16 +8,13 @@ import { FC, ReactNode } from 'react'
 import SignOutButton from '@/components/SignOutButton'
 import FriendRequestsSidebarOptions from '@/components/FriendRequestsSidebarOptions'
 import { fetchRedis } from '@/helpers/redis'
+import { getFriendsByUserId } from '@/helpers/get-friends-by-user-id'
+import SidebarChatList from '@/components/SidebarChatList'
+import MobileChatLayout from '@/components/MobileChatLayout'
+import { SidebarOption } from '@/types/typings'
 
 interface LayoutProps {
   children: ReactNode
-}
-
-interface SidebarOption {
-  id: number
-  name: string
-  href: string
-  Icon: Icon
 }
 
 const sidebarOptions: SidebarOption[] = [
@@ -33,6 +30,8 @@ const Layout = async ({ children }: LayoutProps) => {
   const session = await getServerSession(authOptions)
   if (!session) notFound()
 
+  const friends = await getFriendsByUserId(session.user.id)
+
   const unseenRequestCount = (
     (await fetchRedis(
       'smembers',
@@ -42,16 +41,23 @@ const Layout = async ({ children }: LayoutProps) => {
 
   return (
     <div className='w-full flex h-screen'>
-      <div className='flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6'>
+      <div className='md:hidden'>
+        <MobileChatLayout
+          friends={friends}
+          session={session}
+          sidebarOptions={sidebarOptions}
+          unseenRequestCount={unseenRequestCount}
+        />
+      </div>
+      <div className='hidden md:flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6'>
         <Link href='/dashboard' className='flex h-16 shrink-0 items-center'>
           <Icons.Logo className='h-8 w-auto text-indigo-600' />
         </Link>
-        <div className='text-xs font-semibold leading-6 text-gray-400'>
-          Your chats
-        </div>
         <nav className='flex flex-1 flex-col'>
           <ul role='list' className='flex flex-1 flex-col gap-y-7'>
-            <li>chat that user have</li>
+            <li>
+              <SidebarChatList sessionId={session.user.id} friends={friends} />
+            </li>
             <li>
               <div className='text-xs font-semibold leading-6 text-gray-400'>
                 Overview
@@ -74,14 +80,13 @@ const Layout = async ({ children }: LayoutProps) => {
                     </li>
                   )
                 })}
+                <li>
+                  <FriendRequestsSidebarOptions
+                    sessionId={session.user.id}
+                    initialUnseenRequestCount={unseenRequestCount}
+                  />
+                </li>
               </ul>
-            </li>
-
-            <li>
-              <FriendRequestsSidebarOptions
-                sessionId={session.user.id}
-                initialUnseenRequestCount={unseenRequestCount}
-              />
             </li>
 
             <li className='-mx-6 mt-auto flex items-center'>
@@ -109,7 +114,9 @@ const Layout = async ({ children }: LayoutProps) => {
         </nav>
       </div>
 
-      {children}
+      <aside className='max-h-screen container py-16 md:py-12 w-full'>
+        {children}
+      </aside>
     </div>
   )
 }

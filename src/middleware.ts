@@ -4,9 +4,9 @@ import { NextResponse } from 'next/server'
 export default withAuth(
     async function middleware(req) {
         const pathname = req.nextUrl.pathname
-
+        const secret = process.env.NEXTAUTH_SECRET
         // Manage route protection
-        const isAuth = await getToken({ req })
+        const isAuth = await getToken({ req, secret })
         const isLoginPage = pathname.startsWith('/login')
 
         const sensitiveRoutes = ['/dashboard']
