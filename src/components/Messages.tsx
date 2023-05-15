@@ -42,7 +42,6 @@ const Messages: FC<MessagesProps> = ({
   const scrollDownRef = useRef<HTMLDivElement | null>(null)
 
   const formatTimestamp = (timestamp: number) => {
-    console.log(timestamp)
     return format(timestamp, 'HH:mm')
   }
 

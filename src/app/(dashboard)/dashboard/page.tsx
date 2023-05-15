@@ -2,11 +2,11 @@ import { getFriendsByUserId } from '@/helpers/get-friends-by-user-id'
 import { fetchRedis } from '@/helpers/redis'
 import { authOptions } from '@/lib/auth'
 import { chatHrefConstructor } from '@/lib/utils'
-import { ChevronRight, Link } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { getServerSession } from 'next-auth'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
-interface pageProps {}
+import Link from 'next/link'
 
 const page = async ({}) => {
   const session = await getServerSession(authOptions)
@@ -35,7 +35,7 @@ const page = async ({}) => {
     <div className='container py-12'>
       <h1 className='font-bold text-5xl mb-8'>Recent chats</h1>
       {friendsWithLastMessage.length === 0 ? (
-        <p className='text-sm text-zinc-500'>Nothing to show here ...</p>
+        <p className='text-sm text-zinc-500'>Nothing to show here...</p>
       ) : (
         friendsWithLastMessage.map((friend) => (
           <div
@@ -61,19 +61,21 @@ const page = async ({}) => {
                     alt={`${friend.name} profile picture`}
                     src={friend.image}
                     fill
+                    sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                   />
-                  <div>
-                    <h4 className='text-lg font-semibold'>{friend.name}</h4>
-                    <p className='mt-1 max-w-md'>
-                      <span className='text-zinc-400'>
-                        {friend.lastMessage.senderId === session.user.id
-                          ? 'You: '
-                          : ''}
-                      </span>
-                      {friend.lastMessage.text}
-                    </p>
-                  </div>
                 </div>
+              </div>
+
+              <div>
+                <h4 className='text-lg font-semibold'>{friend.name}</h4>
+                <p className='mt-1 max-w-md'>
+                  <span className='text-zinc-400'>
+                    {friend.lastMessage.senderId === session.user.id
+                      ? 'You: '
+                      : ''}
+                  </span>
+                  {friend.lastMessage.text}
+                </p>
               </div>
             </Link>
           </div>

@@ -29,7 +29,7 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ sessionId, friends }) => {
     const chatHandler = (message: ExtenedMessage) => {
       const shouldNotify =
         pathname !==
-        `dashboard/chat/${chatHrefConstructor(sessionId, message.senderId)}`
+        `/dashboard/chat/${chatHrefConstructor(sessionId, message.senderId)}`
 
       if (!shouldNotify) return
 
@@ -73,7 +73,12 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ sessionId, friends }) => {
 
   return (
     <ul role='list' className='max-h-[25rem] overflow-y-auto -mx-2 space-y-1'>
-      {friends.sort().map((friend) => {
+      {activeChats.length > 0 ? (
+        <div className='text-xs font-semibold leading-6 text-gray-400 mx-2'>
+          Your chats
+        </div>
+      ) : null}
+      {activeChats.sort().map((friend) => {
         const unseenMessagesCount = unseenMessages.filter((unseenMsg) => {
           return unseenMsg.senderId === friend.id
         }).length
