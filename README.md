@@ -1,4 +1,5 @@
 # Full-stack Realtime Chat App
+Feel free to fork or download this project so you could try it out and use this code as a foundation to create an even-better app :grin:.
 
 ### Features
 - Realtime messaging
