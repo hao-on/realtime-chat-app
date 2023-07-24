@@ -15,5 +15,3 @@ Lets check it out in action :point_right: [ChatApp](https://ho-realtime-chat-app
 - Upstadh Redis
 - TailwindCSS
 - Icons from Lucide
-
-### Preview
